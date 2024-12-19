@@ -9,6 +9,7 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -27,6 +28,8 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     private static final double kSimLoopPeriod = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
+
+    private SwerveDrivePoseEstimator m_PoseEstimator = null;
 
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private final Rotation2d BlueAlliancePerspectiveRotation = Rotation2d.fromDegrees(0);
@@ -84,12 +87,12 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         }
     }
 
-    //missing things: SwerveDrivePoseEstimator m_poseEstimator, AnalogGyro m_gyro, SwerveModule *4
+    //missing things: SwerveDrivePoseEstimator m_poseEstimator, AnalogGyro m_gyro, SwerveModule / SwerveModulePositions *4
 
-    /*
+/*
    public void updateOdometry() {
     m_poseEstimator.update(
-        m_gyro.getRotation2d(), //Rotation2d
+        m_pigeon2.getRotation2d(), //Rotation2d
         new SwerveModulePosition[] {
           m_frontLeft.getPosition(), //SwerveModulePositions
           m_frontRight.getPosition(),
@@ -97,6 +100,8 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
           m_backRight.getPosition()
         });
 
+    
+    
 
     boolean useMegaTag2 = true; //set to false to use MegaTag1
     boolean doRejectUpdate = false;
@@ -149,5 +154,5 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
       }
     }
   }
-     */
+      */
 }
