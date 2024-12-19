@@ -10,8 +10,10 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
@@ -29,7 +31,14 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
 
-    private SwerveDrivePoseEstimator m_PoseEstimator = null;
+    private final SwerveDrivePoseEstimator m_poseEstimator =
+      new SwerveDrivePoseEstimator(
+          m_kinematics,
+          m_pigeon2.getRotation2d(),
+          m_modulePositions,
+          new Pose2d(),
+          VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
+          VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
 
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private final Rotation2d BlueAlliancePerspectiveRotation = Rotation2d.fromDegrees(0);
@@ -89,16 +98,11 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
 
     //missing things: SwerveDrivePoseEstimator m_poseEstimator, AnalogGyro m_gyro, SwerveModule / SwerveModulePositions *4
 
-/*
+
    public void updateOdometry() {
     m_poseEstimator.update(
-        m_pigeon2.getRotation2d(), //Rotation2d
-        new SwerveModulePosition[] {
-          m_frontLeft.getPosition(), //SwerveModulePositions
-          m_frontRight.getPosition(),
-          m_backLeft.getPosition(),
-          m_backRight.getPosition()
-        });
+        m_pigeon2.getRotation2d(),
+        m_modulePositions);
 
     
     
@@ -137,7 +141,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     {
       LimelightHelpers.SetRobotOrientation("limelight", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
       LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
-      if(Math.abs(m_gyro.getRate()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
+      if(Math.abs(m_pigeon2.getRate()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
       {
         doRejectUpdate = true;
       }
@@ -154,5 +158,5 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
       }
     }
   }
-      */
+      
 }
