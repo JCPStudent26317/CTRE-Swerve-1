@@ -16,6 +16,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -94,6 +95,10 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
                 hasAppliedOperatorPerspective = true;
             });
         }
+
+        updateOdometry();
+
+        SmartDashboard.putString("Pose", getState().Pose.toString());
     }
 
     //missing things: SwerveDrivePoseEstimator m_poseEstimator, AnalogGyro m_gyro, SwerveModule / SwerveModulePositions *4
@@ -103,9 +108,6 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     m_poseEstimator.update(
         m_pigeon2.getRotation2d(),
         m_modulePositions);
-
-    
-    
 
     boolean useMegaTag2 = true; //set to false to use MegaTag1
     boolean doRejectUpdate = false;
