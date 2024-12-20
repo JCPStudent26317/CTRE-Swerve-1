@@ -152,6 +152,9 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
       {
         LimelightHelpers.SetRobotOrientation("limelight", m_odometry.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
         LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+        if(mt2 == null) { 
+          doRejectUpdate = true;
+        }
         if(Math.abs(m_pigeon2.getRate()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
         {
           doRejectUpdate = true;
