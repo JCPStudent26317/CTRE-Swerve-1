@@ -32,6 +32,9 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
 
+    private LimelightHelpers.PoseEstimate mt2;
+
+
     private final SwerveDrivePoseEstimator m_poseEstimator =
       new SwerveDrivePoseEstimator(
           m_kinematics,
@@ -142,7 +145,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     else if (useMegaTag2 == true)
     {
       LimelightHelpers.SetRobotOrientation("limelight", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
-      LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+      mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
       if(Math.abs(m_pigeon2.getRate()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
       {
         doRejectUpdate = true;
