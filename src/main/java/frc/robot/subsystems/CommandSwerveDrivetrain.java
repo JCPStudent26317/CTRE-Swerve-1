@@ -120,6 +120,8 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     updateOdometry();
 
     SmartDashboard.putString("Pose", m_odometry.getEstimatedPosition().toString());
+    SmartDashboard.putString("Yaw", m_pigeon2.getYaw().toString());
+    
   }
 
   public void updateOdometry() {
