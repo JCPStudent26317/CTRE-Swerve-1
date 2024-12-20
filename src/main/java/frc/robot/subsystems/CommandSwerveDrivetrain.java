@@ -113,7 +113,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
 
     public void updateOdometry() {
       try{
-        m_visionLock.writeLock().lock();
+        m_stateLock.writeLock().lock();
 
         m_odometry.update(Rotation2d.fromDegrees(BaseStatusSignal.getLatencyCompensatedValue(
                             m_yawGetter, m_angularVelocity)), m_modulePositions);
@@ -175,7 +175,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         }
       }
       } finally{
-        m_visionLock.writeLock().unlock();
+        m_stateLock.writeLock().unlock();
       }
 
     }
