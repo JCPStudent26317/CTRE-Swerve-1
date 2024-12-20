@@ -125,11 +125,6 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
   }
 
   public void updateOdometry() {
-    try {
-      m_stateLock.writeLock().lock(); //lock access to the odometry (also being locked by SwerveDrivetrain)
-
-      m_odometry.update(Rotation2d.fromDegrees(BaseStatusSignal.getLatencyCompensatedValue(
-          m_yawGetter, m_angularVelocity)), m_modulePositions);
 
       boolean useMegaTag2 = true; // set to false to use MegaTag1
       boolean doRejectUpdate = false;
@@ -149,10 +144,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         }
 
         if (!doRejectUpdate) {
-          m_odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
-          m_odometry.addVisionMeasurement(
-              mt1.pose,
-              mt1.timestampSeconds);
+              addVisionMeasurement(mt1.pose, mt1.timestampSeconds);
         }
       } else if (useMegaTag2 == true) {
         LimelightHelpers.SetRobotOrientation("limelight", m_odometry.getEstimatedPosition().getRotation().getDegrees(),
@@ -172,17 +164,9 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         }
 
         if (!doRejectUpdate) {
-          //update odometry
-          m_odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
-          m_odometry.addVisionMeasurement(
-              mt2.pose,
-              mt2.timestampSeconds);
+          addVisionMeasurement(mt2.pose, mt2.timestampSeconds); 
         }
       }
-    } finally {
-      //release the lock
-      m_stateLock.writeLock().unlock();
-    }
 
   }
 
