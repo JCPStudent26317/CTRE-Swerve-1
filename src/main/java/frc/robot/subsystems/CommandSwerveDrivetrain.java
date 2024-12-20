@@ -7,7 +7,9 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
+import com.fasterxml.jackson.core.util.RequestPayload;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -98,9 +100,15 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
 
     updateOdometry();
 
-    SmartDashboard.putString("Pose", m_odometry.getEstimatedPosition().toString());
-    SmartDashboard.putString("Yaw", m_pigeon2.getYaw().toString());
+    // Reports pose relative to zero at boot without .relativeTo()
+    SmartDashboard.putString("Pose", getFieldRelativePose().toString());
+    SmartDashboard.putString("Yaw", getPigeon2().getYaw().toString());
     
+  }
+
+  // Returns the Robot Pose relative to the yaw offset
+  public Pose2d getFieldRelativePose(){
+    return this.getState().Pose.relativeTo(new Pose2d(0, 0, m_fieldRelativeOffset));
   }
 
   public void updateOdometry() {
@@ -126,10 +134,10 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
               addVisionMeasurement(mt1.pose, mt1.timestampSeconds);
         }
       } else if (useMegaTag2 == true) {
-        LimelightHelpers.SetRobotOrientation("limelight", m_odometry.getEstimatedPosition().getRotation().getDegrees(),
+        LimelightHelpers.SetRobotOrientation("limelight", getFieldRelativePose().getRotation().getDegrees(),
             0, 0, 0, 0, 0);
         LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
-        if (mt2 == null) {
+        if (mt2 == null) { // in case mt2 returns a nullptr, need to figure out why this is happening
           doRejectUpdate = true;
         } else {
           if (Math.abs(m_pigeon2.getRate()) > 720) // if our angular velocity is greater than 720 degrees per second,
@@ -143,7 +151,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         }
 
         if (!doRejectUpdate) {
-          addVisionMeasurement(mt2.pose, mt2.timestampSeconds); 
+          this.addVisionMeasurement(mt2.pose, mt2.timestampSeconds); 
         }
       }
 
