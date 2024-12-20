@@ -108,9 +108,9 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
 
 
    public void updateOdometry() {
-    m_odometry.update(
+    /*m_odometry.update(
         m_pigeon2.getRotation2d(),
-        m_modulePositions);
+        m_modulePositions);*/
 
     boolean useMegaTag2 = true; //set to false to use MegaTag1
     boolean doRejectUpdate = false;
