@@ -154,8 +154,8 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
         if(mt2 == null) { 
           doRejectUpdate = true;
-        }
-        if(Math.abs(m_pigeon2.getRate()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
+        }else{
+          if(Math.abs(m_pigeon2.getRate()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
         {
           doRejectUpdate = true;
         }
@@ -163,6 +163,8 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         {
           doRejectUpdate = true;
         }
+        }
+        
         if(!doRejectUpdate)
         {
           m_odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
