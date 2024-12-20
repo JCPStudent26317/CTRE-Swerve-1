@@ -34,7 +34,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
 
     private LimelightHelpers.PoseEstimate mt2;
 
-
+    /*
     private final SwerveDrivePoseEstimator m_poseEstimator =
       new SwerveDrivePoseEstimator(
           m_kinematics,
@@ -43,7 +43,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
           new Pose2d(),
           VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
           VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
-
+*/
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private final Rotation2d BlueAlliancePerspectiveRotation = Rotation2d.fromDegrees(0);
     /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
@@ -101,14 +101,14 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
 
         updateOdometry();
 
-        SmartDashboard.putString("Pose", m_poseEstimator.getEstimatedPosition().toString());
+        SmartDashboard.putString("Pose", m_odometry.getEstimatedPosition().toString());
     }
 
-    //missing things: SwerveDrivePoseEstimator m_poseEstimator, AnalogGyro m_gyro, SwerveModule / SwerveModulePositions *4
+    //missing things: SwerveDrivePoseEstimator m_odometry, AnalogGyro m_gyro, SwerveModule / SwerveModulePositions *4
 
 
    public void updateOdometry() {
-    m_poseEstimator.update(
+    m_odometry.update(
         m_pigeon2.getRotation2d(),
         m_modulePositions);
 
@@ -136,15 +136,17 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
 
       if(!doRejectUpdate)
       {
-        m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5,.5,9999999));
-        m_poseEstimator.addVisionMeasurement(
+        m_odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.5,.5,9999999));
+        m_odometry.addVisionMeasurement(
             mt1.pose,
             mt1.timestampSeconds);
       }
     }
     else if (useMegaTag2 == true)
     {
-      LimelightHelpers.SetRobotOrientation("limelight", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
+      //m_pigeon2.getRotation2d().getDegrees();
+      LimelightHelpers.SetRobotOrientation("limelight", m_odometry.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
+      //LimelightHelpers.SetRobotOrientation("limelight", m_pigeon2.getRotation2d().getDegrees(), 0, 0, 0, 0, 0);
       mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
       if(Math.abs(m_pigeon2.getRate()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
       {
@@ -156,8 +158,8 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
       }
       if(!doRejectUpdate)
       {
-        m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
-        m_poseEstimator.addVisionMeasurement(
+        m_odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
+        m_odometry.addVisionMeasurement(
             mt2.pose,
             mt2.timestampSeconds);
       }
