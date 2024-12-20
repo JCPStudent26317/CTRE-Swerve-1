@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import java.util.function.Supplier;
 
+import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrainConstants;
@@ -108,15 +109,9 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
 
 
     public void updateOdometry() {
-      /*m_poseEstimator.update(
-          m_gyro.getRotation2d(),
-          new SwerveModulePosition[] {
-            m_frontLeft.getPosition(),
-            m_frontRight.getPosition(),
-            m_backLeft.getPosition(),
-            m_backRight.getPosition()
-          });
-  */
+      m_odometry.update(Rotation2d.fromDegrees(BaseStatusSignal.getLatencyCompensatedValue(
+                            m_yawGetter, m_angularVelocity)), m_modulePositions);
+
   
       boolean useMegaTag2 = true; //set to false to use MegaTag1
       boolean doRejectUpdate = false;
