@@ -98,7 +98,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
 
         updateOdometry();
 
-        SmartDashboard.putString("Pose", getState().Pose.toString());
+        SmartDashboard.putString("Pose", m_poseEstimator.getEstimatedPosition().toString());
     }
 
     //missing things: SwerveDrivePoseEstimator m_poseEstimator, AnalogGyro m_gyro, SwerveModule / SwerveModulePositions *4
