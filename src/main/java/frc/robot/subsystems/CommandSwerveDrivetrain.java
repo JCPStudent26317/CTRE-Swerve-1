@@ -24,6 +24,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.LimelightHelpers;
 
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 /**
  * Class that extends the Phoenix SwerveDrivetrain class and implements
  * subsystem so it can be used in command-based projects easily.
@@ -33,7 +36,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
 
-    private LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+    private final ReadWriteLock m_visionLock = new ReentrantReadWriteLock();
 
     /*
     private final SwerveDrivePoseEstimator m_poseEstimator =
@@ -109,7 +112,10 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
 
 
     public void updateOdometry() {
-      m_odometry.update(Rotation2d.fromDegrees(BaseStatusSignal.getLatencyCompensatedValue(
+      try{
+        m_visionLock.writeLock().lock();
+
+        m_odometry.update(Rotation2d.fromDegrees(BaseStatusSignal.getLatencyCompensatedValue(
                             m_yawGetter, m_angularVelocity)), m_modulePositions);
 
   
@@ -168,6 +174,10 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
               mt2.timestampSeconds);
         }
       }
+      } finally{
+        m_visionLock.writeLock().unlock();
+      }
+
     }
       
 }
