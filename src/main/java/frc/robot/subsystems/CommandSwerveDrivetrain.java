@@ -7,7 +7,6 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
-import com.fasterxml.jackson.core.util.RequestPayload;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -97,18 +96,13 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         hasAppliedOperatorPerspective = true;
       });
     }
-
     updateOdometry();
 
-    // Reports pose relative to zero at boot without .relativeTo()
-    SmartDashboard.putString("Pose", getFieldRelativePose().toString());
-    SmartDashboard.putString("Yaw", getPigeon2().getYaw().toString());
+    SmartDashboard.putString("Pose", getState().Pose.toString());
+    // The pigeon reading is never changed from its boot zero
+    SmartDashboard.putString("Pigeon Yaw", getPigeon2().getYaw().toString());
+    SmartDashboard.putString("Adjusted Pigeon Yaw", new Pose2d(0,0,m_pigeon2.getRotation2d()).relativeTo(new Pose2d(0,0,m_fieldRelativeOffset)).getRotation().toString());
     
-  }
-
-  // Returns the Robot Pose relative to the yaw offset
-  public Pose2d getFieldRelativePose(){
-    return this.getState().Pose.relativeTo(new Pose2d(0, 0, m_fieldRelativeOffset));
   }
 
   public void updateOdometry() {
@@ -134,8 +128,8 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
               addVisionMeasurement(mt1.pose, mt1.timestampSeconds);
         }
       } else if (useMegaTag2 == true) {
-        LimelightHelpers.SetRobotOrientation("limelight", getFieldRelativePose().getRotation().getDegrees(),
-            0, 0, 0, 0, 0);
+        LimelightHelpers.SetRobotOrientation("limelight", getState().Pose.getRotation().getDegrees(),
+          0, 0, 0, 0, 0);
         LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
         if (mt2 == null) { // in case mt2 returns a nullptr, need to figure out why this is happening
           doRejectUpdate = true;
@@ -151,9 +145,10 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         }
 
         if (!doRejectUpdate) {
-          this.addVisionMeasurement(mt2.pose, mt2.timestampSeconds); 
+          addVisionMeasurement(mt2.pose, mt2.timestampSeconds); 
         }
       }
+
 
   }
 
